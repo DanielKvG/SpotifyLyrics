@@ -1,0 +1,89 @@
+{% extends 'index.html' %}
+{% block content %} 
+<style>
+    ::-webkit-scrollbar {
+        width: 10px;            
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background-color: lightgray;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);            
+    }
+
+    #waitlist {
+        height: 100%;
+        width: 30%;
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    #lyrics {
+        margin: 40px;
+        position: relative;
+        width: 70%;
+        padding: 50px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    }
+
+    #shader {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 200px;
+        width: 100%;
+        z-index: 5;
+        -webkit-mask-image: linear-gradient(to top, black, transparent 90%);
+        mask-image: linear-gradient(to top, black, transparent 90%);
+    }
+
+    #lyrics p {
+        padding-top: 200px;
+        padding-bottom: 10vh;
+        line-height: 1.3;
+    }
+    
+</style>
+
+
+<div id="waitlist">
+    Hier komen liedjes waarop je moet wachten
+</div>
+
+<div id="lyrics">
+    <p id='text'>{{liedje | safe }}</p>
+</div>
+
+<script type="text/javascript">
+    var song_text = "{{liedje | safe}}"
+    var strSpeed = "{{length}}";
+    var strProgress = "{{progress}}";
+    var speed = parseInt(strSpeed);
+    var progress = parseInt(strProgress);
+    var jumpto = parseFloat((progress / speed).toFixed(2));
+
+    $("#lyrics").ready(function(){
+        $('#lyrics').animate({scrollTop: (($('#text').height()*jumpto)-70) }, "swing");
+        setTimeout(function(){
+            $('#lyrics').animate({scrollTop: $('#text').height() }, speed, "linear");
+        }, 4000);       
+    });
+
+    setInterval(() => {
+        if (song_text != document.getElementById('text').innerHTML){
+            $("#lyrics").load(" #text");
+            console.log("other song");
+        }
+
+    }, 2000);
+    
+</script>
+
+{% endblock %}
